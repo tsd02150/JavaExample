@@ -8,7 +8,7 @@ public class InoutExample {
 	public static void main(String[] args) throws IOException {
 		int value = 123;
 		String name = "상품";
-		double price = 1000.100;
+		double price = 1000.100; 
 		
 		System.out.printf("상품의 가격 : %f\n",price);
 		System.out.printf("%s의 가격 : %f\n",name,price);

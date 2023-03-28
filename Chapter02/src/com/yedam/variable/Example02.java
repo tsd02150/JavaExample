@@ -39,7 +39,7 @@ public class Example02 {
 		int iVal1 = 100;
 		long lVal = 1000;
 		long result3 = bVal + iVal1 + lVal;
-		System.out.println(result3 + "\n");
+		System.out.println(result3 + "\n"); 
 		
 		int iVal3 = 1;
 		double dVal3 = (double)iVal3/2;

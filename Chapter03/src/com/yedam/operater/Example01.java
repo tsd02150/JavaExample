@@ -13,7 +13,7 @@ public class Example01 {
 		//강제 타입 변환
 //		byte result3 = (byte)-b;
 		//자동 타입 변환
-		int result3 = -b; 
+		int result3 = -b;  
 		
 		//증감 연산자
 		// 위치에 따라서 연산 타이밍이 다르다.

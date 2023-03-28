@@ -8,7 +8,7 @@ public class Example01 {
 		int var3 = 365; //10진수
 		int var4 = 0xB3; //16진수
  
-		System.out.println(var1); 
+		System.out.println(var1);  
 		System.out.println(var2);
 		System.out.println(var3);
 		System.out.println(var4);
