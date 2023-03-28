@@ -8,8 +8,8 @@ public class Example02 {
 		int iVal = charVal;
 		System.out.println(iVal);
 		double dVal = iVal;
-		System.out.println(dVal+"\n");
-		
+		System.out.println(dVal+"\n"); 
+		 
 		//강제 타입 변환
 		iVal = (int)dVal;
 		System.out.println(iVal);

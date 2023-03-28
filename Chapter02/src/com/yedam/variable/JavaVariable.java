@@ -9,7 +9,7 @@ public class JavaVariable {
 		}
 //		int v3 = v1 + v2;
 		int v4;
-//		v1 = v1 + v4;
+//		v1 = v1 + v4 ;
 	}
 //	v1 = 10;
 }
