@@ -123,5 +123,35 @@ public class homework {
 			}
 			System.out.println();
 		}
+		System.out.println();
+
+		// p161 7번
+		boolean run = true;
+		int balance = 0;
+		String num;
+		while (run) {
+			System.out.println("-----------------------------");
+			System.out.println("1.예금 | 2.출금 | 3.잔고 | 4.종료");
+			System.out.println("-----------------------------");
+			System.out.print("선택 > ");
+			num = scanner.next();
+			int money = 0; 
+			if (num.equals("1")) {
+				System.out.print("예금액 > ");
+				money = scanner.nextInt();
+				balance += money;
+			}else if (num.equals("2")) {
+				System.out.print("출금액 > ");
+				money = scanner.nextInt();
+				balance -= money;
+			}else if (num.equals("3")) {
+				System.out.println("잔고 > " + balance);
+			}else if (num.equals("4")) {
+				break;
+			}
+			
+
+		}
+		System.out.println("프로그램 종료");
 	}
 }
