@@ -12,7 +12,7 @@ public class Test {
 		System.out.println("10 * 2.0 = " + (num1 * (int) num2));
 		System.out.println("10 / 2.0 = " + (num1 / (int) num2));
 		System.out.println();
-		
+
 		// 문제 2
 		// (1) false
 		// (2) true
@@ -23,10 +23,7 @@ public class Test {
 		int money = 2680;
 		System.out.println("money = " + money);
 		for (int i = 0; i < coinUnit.length; i++) {
-			System.out.print(coinUnit[i] + "원 : " + (money / coinUnit[i]) + "개");
-			if (i != coinUnit.length - 1) {
-				System.out.print(", ");
-			}
+			System.out.print(coinUnit[i] + "원 : " + (money / coinUnit[i]) + "개"+((i != coinUnit.length - 1) ? ", " : ""));
 			money = money % coinUnit[i];
 		}
 		System.out.println();
@@ -73,17 +70,19 @@ public class Test {
 				}
 				System.out.println("5가 나올 때 까지 주사위를 " + diceCnt + "번 굴렸습니다.");
 			} else if (menu == 3) {
-				for (int i = 0; i < dice.length; i++) {
-					System.out.println((i + 1) + "은 " + dice[i] + "번 나왔습니다.");
+				for (int i = 1; i <= dice.length; i++) {
+					System.out.println(i + "은 " + dice[i - 1] + "번 나왔습니다.");
 				}
 			} else if (menu == 4) {
-				int max = 0;
-				for (int i = 0; i < dice.length; i++) {
-					if (max < dice[i]) {
-						max = i + 1;
+				int max = dice[0];
+				int maxIndex = 1;
+				for (int i = 1; i <= dice.length; i++) {
+					if (max < dice[i - 1]) {
+						max = dice[i - 1];
+						maxIndex = i;
 					}
 				}
-				System.out.println("가장 많이 나온 수는 " + max + "입니다.");
+				System.out.println("가장 많이 나온 수는 " + maxIndex + "입니다.");
 			} else if (menu == 5) {
 				break;
 			}
