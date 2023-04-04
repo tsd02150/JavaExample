@@ -44,12 +44,5 @@ public class ArcadeGame implements Keypad{
 			this.mode = Keypad.NORMAL_MODE;
 			System.out.println("현재 모드 : NORMAR_MODE");
 		}
-	}
-
-	@Override
-	public int hashCode() {
-		return 1;
-	}
-	
-	
+	}	
 }

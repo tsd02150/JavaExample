@@ -20,5 +20,12 @@ public class ObjectExample {
 		hashMap2.put(new Member("열쇠"),"또치");
 		String value2 = hashMap2.get(new Member("열쇠"));
 		System.out.println(value2);
+		
+		Object obj = new Object();
+		System.out.println(obj.toString());
+		System.out.println(member1);
+		System.out.println(member2.toString());
+		System.out.println(member3.toString());
+		
 	}
 }

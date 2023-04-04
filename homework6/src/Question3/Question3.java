@@ -32,9 +32,9 @@ public class Question3 {
 			}else if (choice == 5) {
 				game.changeMode();
 			}else if (choice == 0) {
-				if(game.hashCode()==0) {
+				if(game instanceof RPGgame) {
 					game = new ArcadeGame();
-				}else if(game.hashCode()==1) {
+				}else if(game instanceof ArcadeGame) {
 					game = new RPGgame();
 				}
 			}else if (choice == 9) {

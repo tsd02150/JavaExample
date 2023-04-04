@@ -45,9 +45,4 @@ public class RPGgame implements Keypad{
 			System.out.println("현재 모드 : NORMAR_MODE");
 		}
 	}
-	
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }
