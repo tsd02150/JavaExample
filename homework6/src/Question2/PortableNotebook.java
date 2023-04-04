@@ -9,7 +9,7 @@ public class PortableNotebook implements Notebook,Tablet{
 	public String kindVideo;
 	public String kindApp;
 	public PortableNotebook(String docprogram,String internetBrowser,String kindVideo,String kindApp) {
-		this.mode = Notebook.NOTEBOOK_MODE;
+		this.mode = NOTEBOOK_MODE;
 		this.docProgram = docprogram;
 		this.internetBrowser = internetBrowser;
 		this.kindVideo = kindVideo;
@@ -34,11 +34,11 @@ public class PortableNotebook implements Notebook,Tablet{
 	}
 	
 	public void changeMode() {
-		if(this.mode==Notebook.NOTEBOOK_MODE) {
-			this.mode = Tablet.TABLET_MODE;
+		if(this.mode==NOTEBOOK_MODE) {
+			this.mode = TABLET_MODE;
 			System.out.println("TABLET_MODE");
-		}else if(this.mode == Keypad.HARD_MODE) {
-			this.mode = Tablet.TABLET_MODE;
+		}else if(this.mode == TABLET_MODE) {
+			this.mode = NOTEBOOK_MODE;
 			System.out.println("NOTEBOOK_MODE");
 		}
 	}

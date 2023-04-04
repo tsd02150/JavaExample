@@ -2,23 +2,23 @@ package Question1;
 
 public class Question1 {
 	public static void main(String[] args) {
-		RPGgame rpg = new RPGgame();
-		rpg.leftUpButton();
-		rpg.rightUpButton();
-		rpg.changeMode();
-		rpg.rightUpButton();
-		rpg.rightDownButton();
-		rpg.leftDownButton();
-		rpg.changeMode();
-		rpg.rightDownButton();
+		Keypad game = new RPGgame();
+		game.leftUpButton();
+		game.rightUpButton();
+		game.changeMode();
+		game.rightUpButton();
+		game.rightDownButton();
+		game.leftDownButton();
+		game.changeMode();
+		game.rightDownButton();
 		System.out.println("====================");
-		ArcadeGame arc = new ArcadeGame();
-		arc.leftUpButton();
-		arc.rightUpButton();
-		arc.leftDownButton();
-		arc.changeMode();
-		arc.rightUpButton();
-		arc.leftUpButton();
-		arc.rightDownButton();
+		game = new ArcadeGame();
+		game.leftUpButton();
+		game.rightUpButton();
+		game.leftDownButton();
+		game.changeMode();
+		game.rightUpButton();
+		game.leftUpButton();
+		game.rightDownButton();
 	}
 }
