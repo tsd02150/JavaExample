@@ -11,7 +11,7 @@ public class DGBCard extends Card{
 	
 	@Override
 	public void showCardInfo() {
-		System.out.println("카드정보 (Card NO : "+this.cardNo+", 유효기간 : "+this.validDate+", CVC : "+this.cvc);
+		System.out.println("카드정보 (Card NO : "+this.cardNo+", 유효기간 : "+this.validDate+", CVC : "+this.cvc+")");
 		System.out.println("담당직원 - "+this.cardStaff+", "+this.company);
 	}
 	
