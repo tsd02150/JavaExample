@@ -12,6 +12,7 @@ public class Member {
 	private String email;
 	private int teamNo;
 	private int grade;
+	private int teamGrade;
 	
 	private String teamName;
 }

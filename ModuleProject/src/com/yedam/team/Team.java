@@ -8,11 +8,13 @@ import lombok.Data;
 public class Team {
 	private int teamNo;
 	private String teamName;
-	private String teamGrade;
 	private int categoryNo;
 	
+	private String id;
 	private String name;
-	private Date calendar_date;
+	private int teamGrade;
+	private String categoryName;
+	private Date calendarDate;
 	
 
 }

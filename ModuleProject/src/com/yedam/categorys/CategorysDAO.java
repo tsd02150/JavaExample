@@ -13,4 +13,23 @@ public class CategorysDAO extends DAO{
 		}
 		return categorysDao;
 	}
+	
+	public String getCategoryName(int categoryNo) {
+		String result=null;
+		try {
+			conn();
+			String sql = "SELECT category_name FROM categorys WHERE category_no = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, categoryNo);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				result = rs.getString("category_name");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			disconn();
+		}
+		return result;
+	}
 }

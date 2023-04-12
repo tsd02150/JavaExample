@@ -1,5 +1,6 @@
 package com.yedam.member;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class MemberDAO extends DAO {
 				member.setEmail(rs.getString("email"));
 				member.setTeamNo(rs.getInt("team_no"));
 				member.setGrade(rs.getInt("grade"));
+				member.setTeamGrade(rs.getInt("team_grade"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,7 +55,7 @@ public class MemberDAO extends DAO {
 
 	// Member 객체 추가
 	// 입력한 데이터를 기반으로 Member 테이블에 데이터 추가
-	public int memberAdd(Member member, String teamName) {
+	public int memberAdd(Member member, String categoryName, String teamName) {
 		int result = 0;
 
 		try {
@@ -61,9 +63,9 @@ public class MemberDAO extends DAO {
 			int teamNo = 0;
 			String sql;
 			if (teamName != null) {
-				teamNo = TeamDAO.getInstance().getTeamNo(teamName);
+				teamNo = TeamDAO.getInstance().getTeamNo(categoryName, teamName);
 				if (teamNo != 0) {
-					sql = "INSERT INTO member VALUES(MEM_SEQ.nextval,?,?,?,?,?,2,?)";
+					sql = "INSERT INTO member VALUES(MEM_SEQ.nextval,?,?,?,?,?,2,99,?)";
 					pstmt = conn.prepareStatement(sql);
 					pstmt.setString(1, member.getId());
 					pstmt.setString(2, member.getPw());
@@ -85,7 +87,9 @@ public class MemberDAO extends DAO {
 			}
 			result = pstmt.executeUpdate();
 
-		} catch (Exception e) {
+		} catch (SQLIntegrityConstraintViolationException e) {
+			System.out.println(" <!> 중복된 ID 가 있습니다.");
+		} catch(Exception e){
 			e.printStackTrace();
 		} finally {
 			disconn();
@@ -163,6 +167,7 @@ public class MemberDAO extends DAO {
 				member.setEmail(rs.getString("email"));
 				member.setTeamNo(rs.getInt("team_no"));
 				member.setGrade(rs.getInt("grade"));
+				member.setTeamGrade(rs.getInt("team_grade"));
 				member.setTeamName(rs.getString("team_name"));
 
 				list.add(member);
@@ -182,10 +187,11 @@ public class MemberDAO extends DAO {
 		Member member = null;
 		try {
 			conn();
-			String sql = "SELECT member_no,id,pw,name,phone_num,email,team_name,grade FROM member join team USING (team_no) WHERE id = ?";
+			String sql = "SELECT member_no,id,pw,name,phone_num,email,team_no,team_name,grade,team_grade FROM member left outer join team USING (team_no) WHERE id = ?";
 			pstmt = conn.prepareStatement(sql);
+
 			pstmt.setString(1, id);
-			
+
 			rs = pstmt.executeQuery();
 
 			if (rs.next()) {
@@ -198,6 +204,8 @@ public class MemberDAO extends DAO {
 				member.setEmail(rs.getString("email"));
 				member.setTeamName(rs.getString("team_name"));
 				member.setGrade(rs.getInt("grade"));
+				member.setTeamNo(rs.getInt("team_no"));
+				member.setTeamGrade(rs.getInt("team_grade"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,28 +215,65 @@ public class MemberDAO extends DAO {
 
 		return member;
 	}
+	
+	public List<Member> getAllMember(int teamNo, int teamGrade){
+		List<Member> list = new ArrayList<Member>();
+		try {
+			conn();
+			String sql = "SELECT * FROM member WHERE team_no=? AND team_grade = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, teamNo);
+			pstmt.setInt(2, teamGrade);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Member member = new Member();
+				member.setMemberNo(rs.getInt("member_no"));
+				member.setId(rs.getString("id"));
+				member.setPw(rs.getString("pw"));
+				member.setName(rs.getString("name"));
+				member.setPhoneNum(rs.getString("phone_num"));
+				member.setEmail(rs.getString("email"));
+				member.setGrade(rs.getInt("grade"));
+				member.setTeamGrade(rs.getInt("team_grade"));
+				list.add(member);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			disconn();
+		}
+		
+		return list;
+	}
 
 	public int updateMember(String searchId, String change, Object changeObject) {
 		int result = 0;
 		String changeString = (String) changeObject;
 		int teamNo = 0;
-		if(change.equals("team_no")) {
+		if (change.equals("team_no")) {
+			System.out.println(changeString);
 			teamNo = TeamDAO.getInstance().getTeamNo(changeString);
-			if(teamNo == 0) {
+			if (teamNo == 0) {
 				return result;
 			}
 		}
 		try {
 			conn();
-			String sql = "UPDATE member SET "+change+"= ? WHERE id = ?";
-			pstmt= conn.prepareStatement(sql);
-			if(teamNo != 0) {
+			String sql = "UPDATE member SET " + change + "= ? , team_grade = 99 WHERE id = ?";
+			pstmt = conn.prepareStatement(sql);
+			if (teamNo != 0) {
 				pstmt.setInt(1, teamNo);
-			}else {
+			} else {
 				pstmt.setString(1, changeString);
 			}
 			pstmt.setString(2, searchId);
 			result = pstmt.executeUpdate();
+			if (change.equals("id")) {
+				MemberService.memberInfo = getMember(changeString);
+			} else {
+				MemberService.memberInfo = getMember(MemberService.memberInfo.getId());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
