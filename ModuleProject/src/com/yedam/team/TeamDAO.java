@@ -142,11 +142,11 @@ public class TeamDAO extends DAO{
 		
 		try {
 			conn();
-			String sql = "select a.member_no,a.id,a.name,a.team_grade,a.team_no,a.team_name,b.category_no,b.category_name from "
-					+ "(select * from team join member using(team_no)) a left outer join "
+			String sql = "select a.member_no,a.id,a.name,a.team_grade,b.team_no,b.team_name,b.category_no,b.category_name from "
+					+ "(select * from team join member using(team_no)) a full outer join "
 					+ "(SELECT * FROM team join categorys USING(category_no)) b "
 					+ "on a.team_no = b.team_no "
-					+ "where a.team_no=?";
+					+ "where b.team_no=? order by a.team_grade, a.name asc";
 			pstmt= conn.prepareStatement(sql);
 			pstmt.setInt(1, teamNo);
 			rs = pstmt.executeQuery();

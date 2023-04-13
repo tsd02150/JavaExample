@@ -47,6 +47,7 @@ public class MemberService {
 
 	public void logout() {
 		if (memberInfo != null) {
+			// 로그인된 정보를 제거
 			memberInfo = null;
 			TeamService.teamInfo = null;
 			System.out.println(" - 로그아웃 되었습니다.");
@@ -70,11 +71,16 @@ public class MemberService {
 
 		String teamName = null;
 		String categoryName = null;
+		int teamGrade=99;
 		if (teamCheck == 1) {
 			System.out.print(" 팀 운동 종류 입력 : ");
 			categoryName = sc.nextLine();
 			System.out.print(" 팀 이름 입력 :");
 			teamName = sc.nextLine();
+			if(memberInfo.getGrade()==1) {
+				System.out.print(" 팀 직책 입력 (1.팀장, 2.팀원) : ");
+				teamGrade = Integer.parseInt(sc.nextLine());
+			}
 		}
 
 		Member member = new Member();
@@ -83,6 +89,7 @@ public class MemberService {
 		member.setName(name);
 		member.setEmail(email);
 		member.setPhoneNum(phoneNum);
+		member.setTeamGrade(teamGrade);
 
 		clearConsole();
 		int result = MemberDAO.getInstance().memberAdd(member,categoryName ,teamName);
@@ -144,18 +151,18 @@ public class MemberService {
 			System.out.println("\t전화번호 : " + list.get(i).getPhoneNum());
 			System.out.print(" e-mail : " + list.get(i).getEmail());
 			if(list.get(i).getTeamName() == null) {
-				System.out.print("\t팀 없음");
+				System.out.print(" \t팀 없음 ");
 			}else {
 				System.out.print("\t팀이름 : " + list.get(i).getTeamName());								
 			}
 			if (list.get(i).getGrade() == 1) {
-				System.out.println("\t등급 : 관리자");
+				System.out.println(" \t등급 : 관리자 ");
 			} else if (list.get(i).getGrade() == 2) {
-				System.out.println("\t등급 : 유저");
+				System.out.println(" \t등급 : 유저 ");
 			}
 			System.out.println();
 			if (i != list.size() - 1) {
-				System.out.println("--------------------------------------------------");
+				System.out.println("------------------------------------------------------------------------");
 			}
 		}
 	}
@@ -172,7 +179,7 @@ public class MemberService {
 		}
 
 		if (member != null) {
-			System.out.println("------------------------------------------------------------------");
+			System.out.println("------------------------------------------------------------------------");
 			System.out.println();
 			System.out.print(" 이름 : " + member.getName());
 			System.out.print("\tID : " + member.getId());
@@ -244,7 +251,7 @@ public class MemberService {
 				clearConsole();
 				break;
 			}
-			
+			clearConsole();
 			if(result > 0) {
 				System.out.println(" - 수정 성공");
 			}else {

@@ -25,14 +25,17 @@ public class CalendarDAO extends DAO{
 			conn();
 			String sql = "select a.calendar_no,a.calendar_date,a.team_no1,a.team_name team_name1,b.team_no2, b.team_name team_name2,a.match "
 					+ "from "
-					+ "(select * from calendar join team on team_no = ?) a join "
+					+ "(select * from calendar join team on team_no = team_no1) a join "
 					+ "(select * from calendar join team on team_no = team_no2) b "
-					+ "on a.calendar_no = b.calendar_no ";
+					+ "on a.calendar_no = b.calendar_no "
+					+ "where (a.team_no= ? or b.team_no = ?)";
 			if(MemberService.memberInfo.getTeamGrade() == 2) {
-				sql += "where a.match = 'o'";
+				sql += "and a.match = 'o'";
 			}
+
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, TeamService.teamInfo.getTeamNo());
+			pstmt.setInt(1, MemberService.memberInfo.getTeamNo());
+			pstmt.setInt(2, MemberService.memberInfo.getTeamNo());
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				Calendar calendar = new Calendar();

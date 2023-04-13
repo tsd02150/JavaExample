@@ -65,14 +65,16 @@ public class MemberDAO extends DAO {
 			if (teamName != null) {
 				teamNo = TeamDAO.getInstance().getTeamNo(categoryName, teamName);
 				if (teamNo != 0) {
-					sql = "INSERT INTO member VALUES(MEM_SEQ.nextval,?,?,?,?,?,2,99,?)";
+					sql = "INSERT INTO member VALUES(MEM_SEQ.nextval,?,?,?,?,?,2,?,?)";
+					System.out.println(member.getTeamGrade());
 					pstmt = conn.prepareStatement(sql);
 					pstmt.setString(1, member.getId());
 					pstmt.setString(2, member.getPw());
 					pstmt.setString(3, member.getName());
 					pstmt.setString(4, member.getPhoneNum());
 					pstmt.setString(5, member.getEmail());
-					pstmt.setInt(6, teamNo);
+					pstmt.setInt(6, member.getTeamGrade());
+					pstmt.setInt(7, teamNo);
 				} else {
 					return result;
 				}

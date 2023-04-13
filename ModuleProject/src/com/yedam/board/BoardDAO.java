@@ -18,17 +18,19 @@ public class BoardDAO extends DAO{
 		return boardDao;
 	}
 	
-	public List<String> getBoardTitleList(int categoryNo){
-		List<String> list = new ArrayList<String>();
+	public List<Board> getBoardTitleList(int categoryNo){
+		List<Board> list = new ArrayList<Board>();
 		try {
 			conn();
-			String sql = "SELECT board_title FROM board WHERE category_no = ?";
+			String sql = "SELECT SUBSTR(board_title,1,20) as board_title,id FROM board join member using(member_no) WHERE category_no = ? ORDER BY board_no DESC";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, categoryNo);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				String title = rs.getString("board_title");
-				list.add(title);
+				Board board=new Board();
+				board.setBoardTitle(rs.getString("board_title")); 
+				board.setMemberId(rs.getString("id"));
+				list.add(board);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -37,6 +39,25 @@ public class BoardDAO extends DAO{
 		}
 		return list;
 	}
+//	public List<String> getBoardTitleList(int categoryNo){
+//		List<String> list = new ArrayList<String>();
+//		try {
+//			conn();
+//			String sql = "SELECT board_title FROM board WHERE category_no = ?";
+//			pstmt = conn.prepareStatement(sql);
+//			pstmt.setInt(1, categoryNo);
+//			rs = pstmt.executeQuery();
+//			while(rs.next()) {
+//				String title = rs.getString("board_title");
+//				list.add(title);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			disconn();
+//		}
+//		return list;
+//	}
 	
 	public List<Board> getBoardInfo(String boardTitle) {
 		List<Board> list = new ArrayList<Board>();
@@ -46,18 +67,18 @@ public class BoardDAO extends DAO{
 					+ "FROM "
 					+ "(SELECT board_title,board_content,board_date,id as board_id ,board_no "
 					+ "FROM board join member USING(member_no) "
-					+ "WHERE board_title = ?) a LEFT OUTER JOIN "
+					+ "WHERE board_title like ?) a LEFT OUTER JOIN "
 					+ "(SELECT id as comment_id, comment_content,comment_date,board_no "
 					+ "FROM comments join member USING(member_no)) b "
 					+ "ON a.board_no = b.board_no";
 			
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, boardTitle);
+			pstmt.setString(1, boardTitle+"%");
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				Board board = new Board();
 				board.setBoardNo(rs.getInt("board_no"));
-				board.setBoardTitle(boardTitle);
+				board.setBoardTitle(rs.getString("board_title"));
 				board.setBoardContent(rs.getString("board_content"));
 				board.setBoardDate(rs.getDate("board_date"));
 				board.setMemberId(rs.getString("board_id"));

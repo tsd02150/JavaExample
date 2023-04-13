@@ -11,39 +11,45 @@ import com.yedam.member.MemberService;
 public class BoardService {
 	Scanner sc = new Scanner(System.in);
 	public static int boardCategory = 0;
+
 	public void clearConsole() {
-		for(int i=0;i<80;i++) {
+		for (int i = 0; i < 80; i++) {
 			System.out.println();
 		}
 	}
+
 	public void boardList(int categoryNo) {
 		boardCategory = categoryNo;
 		int index = 1;
 		while (true) {
 			String category = CategorysDAO.getInstance().getCategoryName(categoryNo);
-			System.out.println("<" + category + " 게시판 >");
-			List<String> titleList = BoardDAO.getInstance().getBoardTitleList(categoryNo);
+			System.out.println("------------------< " + category + " 게시판 >------------------");
+			System.out.println(" no                   제목                  ID");
+			List<Board> titleList = BoardDAO.getInstance().getBoardTitleList(categoryNo);
 			
-			int indexCnt = titleList.size() / 10 + 1;
-			if (index == indexCnt) {
+			int indexCnt = (titleList.size()-1) / 10 + 1;
+			if ((index == indexCnt && titleList.size()%10!=0) || titleList.size()==0) {
 				for (int i = 1; i <= titleList.size() % 10; i++) {
-					System.out.println(i + ")  " + titleList.get(i  + (index-1)*10 - 1));
+					System.out.print(" " + i + ")  " + titleList.get(i + (index - 1) * 10 - 1).getBoardTitle());
+					System.out.println("  \t "+ ((boardCategory == 5) ? "익명" : titleList.get(i + (index - 1) * 10 - 1).getMemberId()));
 				}
 			} else {
 				for (int i = 1; i <= 10; i++) {
-					System.out.println(i + ")  " + titleList.get(i + (index-1)*10 - 1));
+					System.out.print(" " + i + ")  " + titleList.get(i + (index - 1) * 10 - 1).getBoardTitle());
+					System.out.println("  \t "+ ((boardCategory == 5) ? "익명" : titleList.get(i + (index - 1) * 10 - 1).getMemberId()));
 				}
 			}
 			System.out.print("<");
 			for (int i = 1; i <= indexCnt; i++) {
-				System.out.print(" "+i+" ");
+				System.out.print(" " + i + " ");
 			}
 			System.out.println(">");
 
 			System.out.println("다른 번호의 목록 | 0. 현재 목록의 게시물 보기 or 종료");
 			int tmp = Integer.parseInt(sc.nextLine());
-			if(tmp != 0) {
-				if(tmp >indexCnt) {
+			if (tmp != 0) {
+				clearConsole();
+				if (tmp > indexCnt) {
 					System.out.println(" <!> 범위를 벗어났습니다.");
 					continue;
 				}
@@ -56,13 +62,25 @@ public class BoardService {
 				System.out.println("게시물 번호 | 99.글쓰기 | 0. 종료");
 			}
 			int menu = Integer.parseInt(sc.nextLine());
+			clearConsole();
+			if (index == indexCnt) {
+				if (menu > titleList.size() % 10 && menu != 99) {
+					System.out.println(" <!>없는 게시물 입니다.");
+					continue;
+				}
+			} else {
+				if (menu > 10 && menu != 99) {
+					System.out.println(" <!>없는 게시물 입니다.");
+					continue;
+				}
+			}
 			if (menu == 0) {
 				boardCategory = 0;
 				break;
-			} else if (menu == 99) {
+			} else if (menu == 99 && MemberService.memberInfo != null) {
 				addBoard();
 			} else {
-				detailBoard(titleList.get(menu+(index-1)*10 - 1));
+				detailBoard(titleList.get(menu + (index - 1) * 10 - 1).getBoardTitle());
 			}
 		}
 	}
@@ -70,19 +88,34 @@ public class BoardService {
 	public void detailBoard(String title) {
 		while (true) {
 			List<Board> board = BoardDAO.getInstance().getBoardInfo(title);
-			System.out.println("<게시물>");
-			System.out.println("제목 :" + board.get(0).getBoardTitle());
+			System.out.println("-----------------------------------------");
+			System.out.println();
+			System.out.print("제목 :");
+			for (int i = 0; i <= board.get(0).getBoardTitle().length(); i += 26) {
+				System.out.println((board.get(0).getBoardTitle()).substring(i,
+						((i < board.get(0).getBoardTitle().length() - 26) ? i + 26
+								: i + (board.get(0).getBoardTitle().length() % 26))));
+			}
+			System.out.println();
 			if (boardCategory == 5) {
 				System.out.print("ID : 익명");
 			} else {
 				System.out.print("ID : " + board.get(0).getMemberId());
 			}
 			System.out.println("\t날짜 : " + board.get(0).getBoardDate());
-			System.out.println("본문\n" + board.get(0).getBoardContent());
+			System.out.println();
+			System.out.println("본문 :");
+			for (int i = 0; i <= board.get(0).getBoardContent().length(); i += 30) {
+				System.out.println((board.get(0).getBoardContent()).substring(i,
+						((i < board.get(0).getBoardContent().length() - 30) ? i + 30
+								: i + (board.get(0).getBoardContent().length() % 30))));
+			}
+			System.out.println();
+			System.out.println("-----------------------------------------");
 			System.out.println("<댓글>");
 			if (board.get(0).getCommentContent() != null) {
 				for (int i = 0; i < board.size(); i++) {
-					System.out.println("---------------------------------");
+					System.out.println("-----------------------------------------");
 					if (boardCategory == 5) {
 						System.out.print("\tID : 익명" + (i + 1));
 					} else {
@@ -117,13 +150,18 @@ public class BoardService {
 					System.out.println("수정 내용 >");
 					String changeContent = sc.nextLine();
 					result = BoardDAO.getInstance().updateBoard(changeIndex, changeContent, board.get(0).getBoardNo());
+					clearConsole();
 					if (result > 0) {
 						System.out.println("수정 완료");
+						if (change == 1) {
+							title = changeContent;
+						}
 					} else {
 						System.out.println("수정 실패");
 					}
 				} else if (select == 2) {
 					result = BoardDAO.getInstance().deleteBoard(board.get(0).getBoardNo());
+					clearConsole();
 					if (result > 0) {
 						System.out.println("삭제 완료");
 						break;
@@ -149,6 +187,7 @@ public class BoardService {
 				}
 			}
 		}
+		clearConsole();
 	}
 
 	public void addBoard() {
@@ -158,6 +197,7 @@ public class BoardService {
 		String content = sc.nextLine();
 
 		int result = BoardDAO.getInstance().addBoard(title, content);
+		clearConsole();
 		if (result > 0) {
 			System.out.println("작성이 완료 되었습니다.");
 		} else {

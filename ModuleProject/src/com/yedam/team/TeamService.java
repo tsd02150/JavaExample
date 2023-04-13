@@ -22,7 +22,7 @@ public class TeamService {
 	
 	public void getAllTeamInfo() {
 		List<Team> list = null;
-		if(memberService.memberInfo==null) {
+		if(TeamService.teamInfo==null) {
 			list = TeamDAO.getInstance().getAllTeamInfo();			
 		} else if (memberService.memberInfo.getGrade() == 1) {
 			list = TeamDAO.getInstance().getAllTeamInfo();
@@ -56,11 +56,15 @@ public class TeamService {
 			}
 			team = TeamDAO.getInstance().getTeamInfo(teamInfo.getTeamNo());
 		}
-		//리스트로 바꿀까 말까
+
 		clearConsole();
 		System.out.print(" 팀명 : " + team.get(0).getTeamName());
 		System.out.println("\t운동종류 : " + team.get(0).getCategoryName());
 		System.out.println(" 팀원 :");
+		if(team.get(0).getId()==null) {
+			System.out.println(" \t팀원이 아직 없습니다.");
+			return;
+		}
 		for(int i=0;i<team.size();i++) {
 			System.out.print(" \tID : "+team.get(i).getId());
 			System.out.print("\t이름 : "+team.get(i).getName());
@@ -175,14 +179,14 @@ public class TeamService {
 			List<Calendar> list = CalendarDAO.getInstance().searchMatch();
 			for (int i = 1; i <= list.size(); i++) {
 				System.out.print(" [" + i + "]");
-				System.out.print("\t상대팀 : " + list.get(i - 1).getTeamName2());
+				System.out.print("\t홈팀 : " + list.get(i - 1).getTeamName1()+"\t원정팀 : " + list.get(i - 1).getTeamName2());
 				if (memberService.memberInfo.getTeamGrade() == 1) {
 					if (list.get(i - 1).getMatch().equals("o")) {
-						System.out.println("\t매칭 수락");
+						System.out.println(" \t매칭 수락 ");
 					} else if (list.get(i - 1).getMatch().equals("x")) {
-						System.out.println("\t매칭 거절");
+						System.out.println(" \t매칭 거절 ");
 					} else if (list.get(i - 1).getMatch().equals("?")) {
-						System.out.println("\t매칭 대기 중");
+						System.out.println(" \t매칭 대기 중 ");
 					}
 				}
 				System.out.println("\t일정 : " + list.get(i - 1).getCalendarDate());
@@ -196,27 +200,41 @@ public class TeamService {
 			System.out.print(" 선택 : ");
 			String exit = sc.nextLine();
 			if (exit.equals("0")) {
+				clearConsole();
 				break;
 			} else if (exit.equals("1") && memberService.memberInfo.getTeamGrade() == 1) {
 				int index = 0;
 				String match = null;
 				while (true) {
-					System.out.println("매칭 결정할 번호 >");
+					System.out.println("매칭 결정할 번호 (0.종료)>");
 					index = Integer.parseInt(sc.nextLine());
+					if(index==0) {
+						clearConsole();
+						break;
+					}else if(index>list.size()) {
+						System.out.println("존재하지 않는 일정의 번호입니다.");
+						continue;
+					}
 					if (!list.get(index - 1).getMatch().equals("?")) {
 						System.out.println("이미 결정이 끝난 매칭입니다.");
 						continue;
 					}
+					if(list.get(index-1).getTeamNo1()==memberService.memberInfo.getTeamNo()) {
+						System.out.println("상대방의 매칭을 기다리는 중입니다.");
+						continue;
+					}
+					
 					System.out.println("결정 내용 > o , x");
 					match = sc.nextLine();
-					break;
-				}
-				int result = CalendarDAO.getInstance().updateCalendar(list.get(index - 1).getCalendarNo(), match);
-
-				if (result > 0) {
-					System.out.println("매칭 변경 완료");
-				} else {
-					System.out.println("매칭 변경 실패");
+					int result = CalendarDAO.getInstance().updateCalendar(list.get(index - 1).getCalendarNo(), match);
+					
+					if (result > 0) {
+						System.out.println("매칭 변경 완료");
+						break;
+					} else {
+						System.out.println("매칭 변경 실패");
+						break;
+					}
 				}
 			}
 		}
@@ -228,7 +246,7 @@ public class TeamService {
 			List<Calendar> list = CalendarDAO.getInstance().searchMatchWait();
 			for (int i = 1; i <= list.size(); i++) {
 				System.out.println("\t[" + i + "]");
-				System.out.print("\t상대팀 : " + list.get(i - 1).getTeamName2());
+				System.out.print("\t홈팀 : " + list.get(i - 1).getTeamName1()+"\t원정팀 : " + list.get(i - 1).getTeamName2());
 				System.out.println("\t매칭 대기 중");
 				System.out.println("\t일정 : " + list.get(i - 1).getCalendarDate());
 				System.out.println();
@@ -264,11 +282,15 @@ public class TeamService {
 	}
 
 	public void addMatch() {
-		System.out.println("매칭을 신청할 팀을 입력>");
+		System.out.println("매칭을 신청할 팀을 입력 (종료 : 0)>");
 		String team2 = sc.nextLine();
+		if(team2.equals("0")) {
+			return;
+		}
 		System.out.println("매칭할 날짜를 입력 (yyyy-mm-dd) >");
 		String date = sc.nextLine();
 		int result = CalendarDAO.getInstance().addMatch(team2, date);
+		clearConsole();
 		if (result > 0) {
 			System.out.println("매칭 신청 완료");
 
